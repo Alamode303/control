@@ -5,8 +5,7 @@ import java.time.LocalTime;
 import java.util.Objects;
 
 public class FitnessClub {
-    private GymMembership gymMembership;
-    private String option;
+
     private LocalDate presentDay;
     private LocalTime presentTime;
     private GymMembership[] sweem = new GymMembership[20];
@@ -40,7 +39,7 @@ public class FitnessClub {
                     }
                     if (gymVisitors <= 20 && !isGymReg(gymMembership)) {
                         for (int i = 0; i < gym.length; i++) {
-                            if (gym[i] == null) {
+                            if (gym[i]==null) {
                                 gym[i] = gymMembership;
                                 gymVisitors++;
                                 System.out.println("Вы прошли в зал");
@@ -100,22 +99,22 @@ public class FitnessClub {
         int j = 0;
 
 
-        for (int i = 0; i < gym.length; i++) {
-            if (gym[i] != null) {
+        for (GymMembership gymMembership : gym) {
+            if (gymMembership != null) {
                 j++;
                 System.out.print(j + ") ");
-                Logger.visitorData(gym[i].getVisitor());
+                Logger.visitorData(gymMembership.getVisitor());
             }
         }
 
         System.out.println("__________________");
         System.out.println("В бассейне: ");
         int s = 0;
-        for (int i = 0; i < sweem.length; i++) {
-            if (sweem[i] != null) {
+        for (GymMembership gymMembership : sweem) {
+            if (gymMembership != null) {
                 s++;
                 System.out.print(s + ") ");
-                Logger.visitorData(sweem[i].getVisitor());
+                Logger.visitorData(gymMembership.getVisitor());
             }
         }
 
@@ -123,11 +122,11 @@ public class FitnessClub {
         System.out.println("__________________");
         System.out.println("На групповых занятиях: ");
         int k = 0;
-        for (int i = 0; i < group.length; i++) {
-            if (group[i] != null) {
+        for (GymMembership gymMembership : group) {
+            if (gymMembership != null) {
                 k++;
                 System.out.print(k + ") ");
-                Logger.visitorData(group[i].getVisitor());
+                Logger.visitorData(gymMembership.getVisitor());
             }
         }
 
@@ -157,22 +156,24 @@ public class FitnessClub {
     }
 
     public boolean isGymReg(GymMembership gymMembership) {
-        for (int i = 0; i < gym.length; i++) {
-            if (gym[i] == gymMembership) return true;
+        for (GymMembership membership : gym) {
+            if (gymMembership.equals(membership)) return true;
         }
         return false;
     }
 
     public boolean isSwimmingReg(GymMembership gymMembership) {
-        for (int i = 0; i < sweem.length; i++) {
-            if (sweem[i] == gymMembership) return true;
+        for (GymMembership membership : sweem) {
+            //if (sweem[i] == gymMembership) return true;
+            if (gymMembership.equals(membership)) return true;
         }
         return false;
     }
 
     public boolean isGroupReg(GymMembership gymMembership) {
-        for (int i = 0; i < group.length; i++) {
-            if (group[i] == gymMembership) return true;
+        for (GymMembership membership : group) {
+            // if (group[i] == gymMembership) return true;
+            if (gymMembership.equals(membership)) return true;
         }
         return false;
     }
@@ -180,52 +181,54 @@ public class FitnessClub {
     public boolean gymMembershipDateChek(GymMembership gymMembership) {
         if (presentDay.isBefore(gymMembership.endDayOfRegistration) && presentDay.isAfter(gymMembership.startDayOfRegistration))
             return true;
-        else {
+
             System.out.println("Абонемент просрочен!!!");
             return false;
-        }
+
     }
 
     public boolean gymMembershipTimeOptionChek(GymMembership gymMembership, Option option) {
         LocalTime openTime = LocalTime.of(8, 0);
         LocalTime closeTime = LocalTime.of(22, 0);
         LocalTime dayCloseTime = LocalTime.of(16, 0);
-        if (gymMembership.getType() == Type.DAY) closeTime = dayCloseTime;
+        if (gymMembership.getType().equals(Type.DAY)) closeTime = dayCloseTime;
         if (openTime.isBefore(presentTime) && closeTime.isAfter(presentTime)) {
-            if (gymMembership.getType() == Type.FULL) return true;
-            else if (gymMembership.getType() == Type.SINGLE && option != Option.GROUP) return true;
-            else if (gymMembership.getType() == Type.DAY && option != Option.SWIMMING) return true;
+            if (gymMembership.getType().equals(Type.FULL)) return true;
+            else if (gymMembership.getType().equals(Type.SINGLE) && !option.equals(Option.GROUP)) return true;
+            else if (gymMembership.getType().equals(Type.DAY) && !option.equals(Option.SWIMMING)) return true;
             else System.out.println("Вам не доступны занятия " + option.name() + "\nпопробуйте выбрать другую");
-
 
         } else System.out.println("Недоступное время посещения");
         return false;
-
     }
 
     public void leaveGym(GymMembership gymMembership) {
         for (int i = 0; i < gym.length; i++) {
-            if (gym[i] == gymMembership) {
+            if (gymMembership.equals(gym[i])) {
                 gym[i] = null;
                 gymVisitors--;
+                break;
             }
         }
     }
 
     public void leaveGroup(GymMembership gymMembership) {
         for (int i = 0; i < group.length; i++) {
-            if (group[i] == gymMembership) {
+            if (gymMembership.equals(group[i])) {
                 group[i] = null;
                 groupVisitors--;
+                break;
             }
         }
     }
 
     public void leaveSwim(GymMembership gymMembership) {
         for (int i = 0; i < sweem.length; i++) {
-            if (sweem[i] == gymMembership) {
+            //if (sweem[i] == gymMembership)
+            if (gymMembership.equals(sweem[i])){
                 sweem[i] = null;
                 swimmingVisitors--;
+                break;
             }
         }
     }
@@ -253,23 +256,22 @@ public class FitnessClub {
 
     public void timeToDayLeave() {
         for (int i = 0; i < gym.length; i++) {
-            if (gym[i] != null && gym[i].getType() == Type.DAY) {
+            if (gym[i] != null && gym[i].getType().equals(Type.DAY)) {
                 gym[i] = null;
                 gymVisitors--;
             }
         }
         for (int i = 0; i < sweem.length; i++) {
-            if (sweem[i] != null && sweem[i].getType() == Type.DAY) {
+            if (sweem[i] != null && sweem[i].getType().equals(Type.DAY)){
                 sweem[i] = null;
                 swimmingVisitors--;
             }
         }
         for (int i = 0; i < group.length; i++) {
-            if (group[i] != null && group[i].getType() == Type.DAY) {
+            if (group[i] != null && group[i].getType().equals(Type.DAY)) {
                 group[i] = null;
                 groupVisitors--;
             }
         }
     }
-
 }
